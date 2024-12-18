@@ -1,16 +1,14 @@
-import React from 'react'
-
+import { useState } from 'react'
 import { Wrapper, Sidebar, Main } from '../components/styled'
 import PostForm from '../components/PostForm'
-
 import usePosts, { PostsContext } from '../hooks/usePosts'
 import usePost from '../hooks/usePost'
 import useCreatePost from '../hooks/useCreatePost'
 import useSavePost from '../hooks/useSavePost'
 import useDeletePost from '../hooks/useDeletePost'
 
-function App() {
-  const [activePostId, setActivePostId] = React.useState()
+export default function App() {
+  const [activePostId, setActivePostId] = useState()
 
   return (
     <PostsContext>
@@ -50,26 +48,21 @@ function Posts({ setActivePostId }) {
     }
   }
 
+  if (status === 'loading') return <span>Loading...</span>
+  if (status === 'error') return <span>Error: {error.message}</span>
+
   return (
     <section>
       <div>
         <h3>Posts</h3>
         <div>
-          {status === 'loading' ? (
-            <span>Loading...</span>
-          ) : status === 'error' ? (
-            <span>Error: {error.message}</span>
-          ) : (
-            <div>
-              {posts.map((post) => (
-                <div key={post.id}>
-                  <a href="#" onClick={() => setActivePostId(post.id)}>
-                    {post.title}
-                  </a>
-                </div>
-              ))}
+          {posts.map((post) => (
+            <div key={post.id}>
+              <a href="#" onClick={() => setActivePostId(post.id)}>
+                {post.title}
+              </a>
             </div>
-          )}
+          ))}
         </div>
       </div>
       <hr />
@@ -109,7 +102,7 @@ function Post({ activePostId, setActivePostId }) {
   }
 
   const onDelete = async () => {
-    if (post.id) {
+    if (post?.id) {
       try {
         await deletePost(post.id)
         setActivePostId()
@@ -119,43 +112,38 @@ function Post({ activePostId, setActivePostId }) {
     }
   }
 
+  if (status === 'loading') return <span>Loading...</span>
+  if (status === 'error') return <span>Error: {error.message}</span>
+
   return (
-    <>
-      {status === 'loading' ? (
-        <span>Loading...</span>
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
-      ) : (
-        <div>
-          <h3>{post.title}</h3>
-          <div>
-            <p>{post.content}</p>
-          </div>
+    <div>
+      <h3>{post.title}</h3>
+      <div>
+        <p>{post.content}</p>
+      </div>
 
-          <hr />
+      <hr />
 
-          <PostForm
-            initialValues={post}
-            onSubmit={onSubmit}
-            submitText={
-              savePostStatus === 'loading'
-                ? 'Saving...'
-                : savePostStatus === 'error'
-                ? 'Error!'
-                : savePostStatus === 'success'
-                ? 'Saved!'
-                : 'Update Post'
-            }
-          />
+      <PostForm
+        initialValues={post}
+        onSubmit={onSubmit}
+        submitText={
+          savePostStatus === 'loading'
+            ? 'Saving...'
+            : savePostStatus === 'error'
+            ? 'Error!'
+            : savePostStatus === 'success'
+            ? 'Saved!'
+            : 'Update Post'
+        }
+      />
 
-          <br />
+      <br />
 
-          <button onClick={onDelete}>
-            {deletePostStatus === 'loading' ? '...' : 'Delete Post'}
-          </button>
-        </div>
-      )}
-    </>
+      <button onClick={onDelete}>
+        {deletePostStatus === 'loading' ? '...' : 'Delete Post'}
+      </button>
+    </div>
   )
 }
 
@@ -163,5 +151,3 @@ function Stats() {
   const { posts, status } = usePosts()
   return <div>Total Posts: {status === 'loading' ? '...' : posts.length}</div>
 }
-
-export default App

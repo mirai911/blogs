@@ -1,4 +1,3 @@
-'use client'
 import React, { useState } from 'react';
 import { Layout, Typography, Space, List, Divider, Spin, message, Button, Form, Input, Statistic } from 'antd';
 import { Book, Bell, User, Plus, FileText, BookOpen } from 'lucide-react';
